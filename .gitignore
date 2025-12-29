@@ -40,4 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#timestamp:1:51:20
+#timestamp
+timestamp.txt
