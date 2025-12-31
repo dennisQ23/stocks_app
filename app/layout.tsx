@@ -19,6 +19,12 @@ export const metadata: Metadata = {
     "Track real-time stock prices, get personalized alerts and explore detailed company insights.",
 };
 
+/**
+ * Wraps application pages with the root HTML structure, global fonts, and UI toaster.
+ *
+ * @param children - The page content to render inside the layout
+ * @returns The top-level HTML element containing the body with configured font variables, antialiasing, rendered children, and a Toaster component
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
