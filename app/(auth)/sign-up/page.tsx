@@ -1,71 +1,140 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import InputField from '@/components/forms/InputField';
-import FooterLink from '@/components/forms/FooterLink';
-import {signInWithEmail, signUpWithEmail} from "@/lib/actions/auth.actions";
-import {toast} from "sonner";
-import {signInEmail} from "better-auth/api";
-import {useRouter} from "next/navigation";
+import { CountrySelectField } from "@/components/forms/CountrySelectField";
+import InputField from "@/components/forms/InputField";
+import SelectField from "@/components/forms/SelectField";
+import { Button } from "@/components/ui/button";
+import { signUpWithEmail } from "@/lib/actions/auth.actions";
+import {
+  INVESTMENT_GOALS,
+  PREFERRED_INDUSTRIES,
+  RISK_TOLERANCE_OPTIONS,
+} from "@/lib/contants";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-const SignIn = () => {
-  const router = useRouter()
+const SignUp = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm<SignInFormData>({
+  } = useForm<SignUpFormData>({
     defaultValues: {
-      email: '',
-      password: '',
+      fullName: "",
+      email: "",
+      password: "",
+      country: "US",
+      investmentGoals: "Growth",
+      riskTolerance: "Medium",
+      preferredIndustry: "Technology",
     },
-    mode: 'onBlur',
+    mode: "onBlur",
   });
 
-  const onSubmit = async (data: SignInFormData) => {
+  const onSubmit = async (data: SignUpFormData) => {
     try {
-      const result = await signInWithEmail(data);
-      if(result.success) router.push('/');
+      const result = await signUpWithEmail(data);
+      if (result.success) router.push("/");
     } catch (e) {
       console.error(e);
-      toast.error('Sign in failed', {
-        description: e instanceof Error ? e.message : 'Failed to sign in.'
-      })
+      toast.error("Sign up failed", {
+        description:
+          e instanceof Error ? e.message : "Failed to create account.",
+      });
     }
-  }
+  };
 
   return (
-      <>
-        <h1 className="form-title">Welcome back</h1>
+    <>
+      <h1 className="form-title">Sign Up & Personalized</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <InputField
-              name="email"
-              label="Email"
-              placeholder="contact@jsmastery.com"
-              register={register}
-              error={errors.email}
-              validation={{ required: 'Email is required', pattern: /^\w+@\w+\.\w+$/ }}
-          />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <InputField
+          name="fullName"
+          label="Full Name"
+          placeholder="John Doe"
+          register={register}
+          error={errors.fullName}
+          validation={{ required: "Full name is required", minLength: 2 }}
+        />
 
-          <InputField
-              name="password"
-              label="Password"
-              placeholder="Enter your password"
-              type="password"
-              register={register}
-              error={errors.password}
-              validation={{ required: 'Password is required', minLength: 8 }}
-          />
+        <InputField
+          name="email"
+          label="Email"
+          placeholder="john@example.com"
+          register={register}
+          error={errors.email}
+          validation={{
+            required: "Email is required",
+            pattern: /^\w+@\w+\.\w+/,
+            message: "Email address is required",
+          }}
+        />
 
-          <Button type="submit" disabled={isSubmitting} className="yellow-btn w-full mt-5">
-            {isSubmitting ? 'Signing In' : 'Sign In'}
-          </Button>
+        <InputField
+          name="password"
+          label="Password"
+          placeholder="Enter a strong password"
+          type="password"
+          register={register}
+          error={errors.password}
+          validation={{ required: "Password is required", minLength: 8 }}
+        />
 
-          <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />
-        </form>
-      </>
+        <CountrySelectField
+          name="country"
+          label="Country"
+          control={control}
+          error={errors.country}
+          required
+        />
+
+        <SelectField
+          name="investmGoals"
+          label="Investment Goals"
+          placeholder="Select your investment goals"
+          options={INVESTMENT_GOALS}
+          control={control}
+          error={errors.investmentGoals}
+          required
+        />
+
+        <SelectField
+          name="riskTolerance"
+          label="Risk Tolerance"
+          placeholder="Select your risk level"
+          options={RISK_TOLERANCE_OPTIONS}
+          control={control}
+          error={errors.riskTolerance}
+          required
+        />
+
+        <SelectField
+          name="preferredIndustry"
+          label="Preferred Industry"
+          placeholder="Select your preferred industry"
+          options={PREFERRED_INDUSTRIES}
+          control={control}
+          error={errors.preferredIndustry}
+          required
+        />
+
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="yellow-btn w-full mt-5"
+        >
+          {isSubmitting
+            ? "Creating Account..."
+            : "Start Your Investing Journey"}
+        </Button>
+      </form>
+    </>
   );
 };
-export default SignIn;
+
+export default SignUp;

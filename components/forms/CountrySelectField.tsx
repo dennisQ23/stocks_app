@@ -50,7 +50,7 @@ const CountrySelect = ({
   const [open, setOpen] = useState(false);
 
   // Get country options with flags
-  const countries = countryList().getData();
+  const countries: { value: string; label: string }[] = countryList().getData();
 
   // Helper function to get flag emoji
   const getFlagEmoji = (countryCode: string) => {
@@ -73,7 +73,13 @@ const CountrySelect = ({
           {value ? (
             <span className="flex items-center gap-2">
               <span>{getFlagEmoji(value)}</span>
-              <span>{countries.find((c) => c.value === value)?.label}</span>
+              <span>
+                {
+                  countries.find(
+                    (c: { value: string; label: string }) => c.value === value
+                  )?.label
+                }
+              </span>
             </span>
           ) : (
             "Select your country..."
