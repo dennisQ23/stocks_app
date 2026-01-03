@@ -9,6 +9,14 @@ if (!FINNHUB_API_KEY) {
   throw new Error("Finnhub API key is not set in environment variables.");
 }
 
+/**
+ * Fetches JSON from the given URL with optional cache revalidation.
+ *
+ * @param url - The request URL to fetch.
+ * @param revalidateSeconds - If provided, enables caching with the specified revalidation window in seconds; otherwise no caching is used.
+ * @returns The parsed JSON body of the HTTP response.
+ * @throws Error if the HTTP response status is not OK; the error message includes the status code and status text.
+ */
 async function fetchJSON(url: string, revalidateSeconds?: number) {
   const options: RequestInit = revalidateSeconds
     ? { cache: "force-cache", next: { revalidate: revalidateSeconds } }
@@ -25,9 +33,20 @@ async function fetchJSON(url: string, revalidateSeconds?: number) {
   return response.json();
 }
 
+<<<<<<< HEAD
 export async function getNews(
   symbols?: string[]
 ): Promise<MarketNewsArticle[]> {
+=======
+/**
+ * Fetches and formats market news either for the provided stock symbols or general market news.
+ *
+ * @param symbols - Optional array of stock ticker symbols; when omitted or empty, general market news is returned.
+ * @returns An array of up to six formatted MarketNewsArticle objects. If `symbols` is provided, returned articles are company-specific for those tickers and deduplicated by URL; otherwise, returns general market news.
+ * @throws Error - Throws "Failed to fetch news" if the fetch or processing fails.
+ */
+export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
+>>>>>>> 899f2c9819e46da11c96010c290a6cf5a4a680c9
   try {
     const { from, to } = getDateRange(5);
 
@@ -71,6 +90,13 @@ export async function getNews(
   }
 }
 
+/**
+ * Fetches up to six deduplicated, formatted general market news articles from Finnhub.
+ *
+ * Validates and deduplicates raw general-news items (by id, URL, and headline), limits the result to six entries, and converts each into a MarketNewsArticle.
+ *
+ * @returns An array of up to six formatted MarketNewsArticle objects.
+ */
 async function getGeneralNews(): Promise<MarketNewsArticle[]> {
   const url = `${FINNHUB_BASE_URL}/news?category=general&token=${FINNHUB_API_KEY}`;
   const rawArticles: RawNewsArticle[] = await fetchJSON(url, 3600);
