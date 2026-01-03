@@ -3,6 +3,12 @@
 import { connectToDatabase } from "@/database/mongoose";
 import Watchlist from "@/database/models/watchlist.model";
 
+/**
+ * Retrieve the watchlist symbols for the user with the given email.
+ *
+ * @param email - The user's email address to look up
+ * @returns An array of watchlist symbol strings for the user; empty array if the user is not found or an error occurs
+ */
 export async function getWatchlistSymbolsByEmail(email: string): Promise<string[]> {
   try {
     const mongoose = await connectToDatabase();
