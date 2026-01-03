@@ -112,7 +112,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
       }
     }
 
-    return userNewsSummaries;
+    // return userNewsSummaries;
 
     // Step #4: (placeholder) Send email
     await step.run("send-news-emails", async () => {
