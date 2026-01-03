@@ -1,13 +1,13 @@
 "use server";
 
-import {
-  getDateRange,
-  validateArticle,
-  formatArticle,
-} from "@/lib/utils";
+import { getDateRange, validateArticle, formatArticle } from "@/lib/utils";
 
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
-const NEXT_PUBLIC_FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;
+
+if (!FINNHUB_API_KEY) {
+  throw new Error("Finnhub API key is not set in environment variables.");
+}
 
 async function fetchJSON(url: string, revalidateSeconds?: number) {
   const options: RequestInit = revalidateSeconds
@@ -17,13 +17,17 @@ async function fetchJSON(url: string, revalidateSeconds?: number) {
   const response = await fetch(url, options);
 
   if (!response.ok) {
-    throw new Error(`Finnhub API error: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Finnhub API error: ${response.status} ${response.statusText}`
+    );
   }
 
   return response.json();
 }
 
-export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
+export async function getNews(
+  symbols?: string[]
+): Promise<MarketNewsArticle[]> {
   try {
     const { from, to } = getDateRange(5);
 
@@ -31,7 +35,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
       const cleanSymbols = symbols
         .map((s) => s.trim().toUpperCase())
         .filter((s) => s !== "");
-      
+
       if (cleanSymbols.length === 0) return getGeneralNews();
 
       const articles: MarketNewsArticle[] = [];
@@ -40,11 +44,11 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
 
       for (let i = 0; i < rounds; i++) {
         const symbol = cleanSymbols[i % cleanSymbols.length];
-        const url = `${FINNHUB_BASE_URL}/company-news?symbol=${symbol}&from=${from}&to=${to}&token=${NEXT_PUBLIC_FINNHUB_API_KEY}`;
-        
+        const url = `${FINNHUB_BASE_URL}/company-news?symbol=${symbol}&from=${from}&to=${to}&token=${FINNHUB_API_KEY}`;
+
         try {
           const rawArticles: RawNewsArticle[] = await fetchJSON(url, 3600); // Cache for 1 hour
-          
+
           for (const raw of rawArticles) {
             if (validateArticle(raw) && !seenUrls.has(raw.url!)) {
               articles.push(formatArticle(raw, true, symbol, i));
@@ -68,11 +72,11 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
 }
 
 async function getGeneralNews(): Promise<MarketNewsArticle[]> {
-  const url = `${FINNHUB_BASE_URL}/news?category=general&token=${NEXT_PUBLIC_FINNHUB_API_KEY}`;
+  const url = `${FINNHUB_BASE_URL}/news?category=general&token=${FINNHUB_API_KEY}`;
   const rawArticles: RawNewsArticle[] = await fetchJSON(url, 3600);
-  
+
   const uniqueArticles = new Map<string, RawNewsArticle>();
-  
+
   for (const article of rawArticles) {
     if (validateArticle(article)) {
       const key = `${article.id}-${article.url}-${article.headline}`;
