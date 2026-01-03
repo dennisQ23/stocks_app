@@ -33,11 +33,6 @@ async function fetchJSON(url: string, revalidateSeconds?: number) {
   return response.json();
 }
 
-<<<<<<< HEAD
-export async function getNews(
-  symbols?: string[]
-): Promise<MarketNewsArticle[]> {
-=======
 /**
  * Fetches and formats market news either for the provided stock symbols or general market news.
  *
@@ -45,8 +40,9 @@ export async function getNews(
  * @returns An array of up to six formatted MarketNewsArticle objects. If `symbols` is provided, returned articles are company-specific for those tickers and deduplicated by URL; otherwise, returns general market news.
  * @throws Error - Throws "Failed to fetch news" if the fetch or processing fails.
  */
-export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
->>>>>>> 899f2c9819e46da11c96010c290a6cf5a4a680c9
+export async function getNews(
+  symbols?: string[]
+): Promise<MarketNewsArticle[]> {
   try {
     const { from, to } = getDateRange(5);
 
