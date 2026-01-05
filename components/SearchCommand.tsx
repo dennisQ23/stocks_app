@@ -69,7 +69,7 @@ export default function SearchCommand({
 
   useEffect(() => {
     debouncedSearch();
-  }, [searchTerm]);
+  }, [searchTerm, debouncedSearch]);
 
   /**
    * Handler for when a stock is selected from the command list
@@ -127,7 +127,7 @@ export default function SearchCommand({
                 <li key={stock.symbol} className="search-item">
                   <Link
                     href={`/stocks/${stock.symbol}`}
-                    onClick={() => handleSelectStock}
+                    onClick={handleSelectStock}
                     className="search-item-link"
                   >
                     <TrendingUp className="h-4 w-4 text-gray-500" />
