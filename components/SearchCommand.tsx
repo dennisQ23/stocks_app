@@ -14,11 +14,12 @@ import { searchStocks } from "@/lib/actions/finnhub.actions";
 import { useDebounce } from "@/hooks/useDebounce";
 
 /**
- * SearchCommand component - A minimal command palette for searching stocks
- * Features:
- * - Cmd/Ctrl + K shortcut to toggle the search dialog
- * - Basic search input with loading state
- * - Stock selection with logging functionality
+ * Render a command-palette-style stock search dialog with a trigger and debounced search.
+ *
+ * @param renderAs - Determines the trigger element; "button" renders a Button, "text" renders inline text.
+ * @param label - Text shown in the trigger element.
+ * @param initialStocks - Initial list of stocks shown when no search term is entered.
+ * @returns A React element containing the trigger and the command dialog UI for searching and selecting stocks.
  */
 export default function SearchCommand({
   renderAs = "button",
